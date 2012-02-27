@@ -126,12 +126,25 @@ class FacebookUser {
 		$groups = $this->fb->api("/me/groups");
 		$likes = $this->fb->api("/me/likes");
 		
+		/**
+		 * Parse Facebook likes
+		 */
+		foreach ($likes['data'] as $index => $like) {
+			$this->likes[$index] = new FacebookLike($this->fb, $like['id']);
+		}
+		
 		$this->statuses = $statuses['data'];
 		$this->groups = $groups['data'];
-		$this->likes = $likes['data'];
+		//$this->likes = $likes['data'];
 	}
 	
-	
+	/**
+	 * @param mixed index
+	 * @return FacebookLike
+	 */
+	public function getLikeAt($index){
+		return $this->likes[$index];
+	}
 }
 
 ?>

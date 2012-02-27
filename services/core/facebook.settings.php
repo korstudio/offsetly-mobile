@@ -1,6 +1,7 @@
 <?php
 require_once('facebook/facebook.php');
 require_once('FacebookUser.php');
+require_once('FacebookLike.php');
 require_once('functions.php');
 
 define('APP_ID', '302999799754348');
@@ -20,20 +21,31 @@ $fb_scope[] = 'read_friendlists';
 $fb_scope[] = 'read_stream';
 $fb_scope[] = 'email';
 
-$facebook = new Facebook(array(
-	'appId' => APP_ID,
-	'secret' => APP_SECRET
-));
+global $facebook;
 
-$fb_user = $facebook->getUser();
+try {
+	$facebook = new Facebook(array(
+		'appId' => APP_ID,
+		'secret' => APP_SECRET
+	));
+	$fb_user = $facebook->getUser();
+} catch (FacebookApiException $e) {
+	$fb_user = NULL;
+} catch (CurlException $e) {
+	$fb_user = NULL;
+}
+
+
+
+
 
 if($fb_user){
 	try {
-    // Proceed knowing you have a logged in user who's authenticated.
-    $fb_user_profile = $facebook->api('/me');
-  } catch (FacebookApiException $e) {
-    $fb_user = NULL;
-  }
+		// Proceed knowing you have a logged in user who's authenticated.
+		$fb_user_profile = $facebook->api('/me');
+	} catch (FacebookApiException $e) {
+		$fb_user = NULL;
+	}
 }
 
 if($fb_user){

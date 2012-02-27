@@ -28,7 +28,7 @@ function getUserGroups(){
 		$str_list .= '<div class="well row"><div class="span12">';
 		foreach($groupMembers as $index=>$member){
 			if($member['administrator']){
-				$str_list .= '<div>';
+				$str_list .= '<div class="list_container">';
 				$str_list .= '<img src="https://graph.facebook.com/'.$member['id'].'/picture" alt="" width="50" height="50">';
 				$str_list .= '<span class="label label-info">ADMIN</span>';
 				$str_list .= '<h5>'.$member['name'].'</h5>';
@@ -38,14 +38,19 @@ function getUserGroups(){
 			}
 		}
 		$groupMembers = array_orderby($groupMembers, 'name', SORT_ASC, SORT_STRING, 'id', SORT_ASC);
+		$MAX_DISPLAY = 6;
+		$currentCount = 0;
 		foreach($groupMembers as $member){
+			if(++$currentCount > $MAX_DISPLAY) break;
 			if($member != NULL){
-				$str_list .= '<div>';
+				$str_list .= '<div class="list_container">';
 				$str_list .= '<img src="https://graph.facebook.com/'.$member['id'].'/picture" alt="" width="50" height="50">';
 				if($member['administrator']) $str_list .= '<span class="label label-info">ADMIN</span>';
 				$str_list .= '<h5>'.$member['name'].'</h5>';
 				$str_list .= '<div style="clear:both"></div>';
 				$str_list .= '</div>';
+			}else{
+				--$currentCount;
 			}
 			
 		}
@@ -63,47 +68,22 @@ function getUserLikes(){
 	
 	$likes = $me->likes;
 	$str_list_title = '<p><a href="URL">TITLE</a></p>';
-	$str_list = "";
-	for($i = 0; $i < /*count($groups)*/3; $i++){
-		$str_temp = str_replace("TITLE", $likes[$i]['name'], $str_list_title);
-		$str_temp = str_replace("URL", "#", $str_temp);
+	$str_list = '<div class="well row"><div class="span12">';
+	for($i = 0; $i < count($likes); $i++){
+		$likeItem = $likes[$i];
+		$likeName = $likeItem->name;
+		$likeId = $likeItem->id;
+		$likeCat = $likeItems->category;
+		$str_temp = str_replace(array("TITLE", "URL"), array($likeName, $likeItem->link), $str_list_title);
+		
+		$str_list .= '<div class="list_container">';
+		$str_list .= '<img src="https://graph.facebook.com/'.$likeId.'/picture" alt="" width="50" height="50">';
 		$str_list .= $str_temp;
+		$str_list .= '<div style="clear:both"></div>';
+		$str_list .= '</div>';
 		
-		$likeCat = $facebook->api("/{$likes[$i]['id']}/category");
-		
-		
-		$groupMembers = $facebook->api("/{$groups[$i]['id']}/members");
-		$groupMembers = $groupMembers['data'];
-		$str_list .= '<div class="well row"><div class="span12">';
-		foreach($groupMembers as $index=>$member){
-			if($member['administrator']){
-				$str_list .= '<div>';
-				$str_list .= '<img src="https://graph.facebook.com/'.$member['id'].'/picture" alt="" width="50" height="50">';
-				$str_list .= '<span class="label label-info">ADMIN</span>';
-				$str_list .= '<h5>'.$member['name'].'</h5>';
-				$str_list .= '<div style="clear:both"></div>';
-				$str_list .= '</div>';
-				$groupMembers[$index] = NULL;
-			}
-		}
-		$groupMembers = array_orderby($groupMembers, 'name', SORT_ASC, SORT_STRING, 'id', SORT_ASC);
-		foreach($groupMembers as $member){
-			if($member != NULL){
-				$str_list .= '<div>';
-				$str_list .= '<img src="https://graph.facebook.com/'.$member['id'].'/picture" alt="" width="50" height="50">';
-				if($member['administrator']) $str_list .= '<span class="label label-info">ADMIN</span>';
-				$str_list .= '<h5>'.$member['name'].'</h5>';
-				$str_list .= '<div style="clear:both"></div>';
-				$str_list .= '</div>';
-			}
-			
-		}
-		$str_list .= '</div></div>';
-		
-		/*$str_temp = str_replace("CONTENT", $groups[$i]['name'], $str_list_content);
-		$str_temp = str_replace("USER", "#", $str_temp);
-		$str_list .= $str_temp;*/
 	}
+	$str_list .= '</div></div>';
 	return $str_list;
 }
 
@@ -133,21 +113,22 @@ function getUserLikes(){
 	});
 </script>
 <style>
-#fbgroups .thumbnail {
+.thumbnail {
 	width: 200px;
 	height: 50px;
 }
-#fbgroups .span12 {
+.span12 {
 	-webkit-column-count: 3;
 }
-#fbgroups .span12 div{
+.span12 .list_container{
 	height: 50px;
 	margin: 5px 0;
 }
-#fbgroups h5 {
-	display: block;
-	margin-left: 58px;
-	margin-top: -32px;
+.span12 .list_container > *{
+	float: left;
+}
+h5 {
+	
 }
 </style>
 </head>
