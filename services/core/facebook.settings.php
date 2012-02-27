@@ -1,6 +1,7 @@
 <?php
 require_once('facebook/facebook.php');
 require_once('FacebookUser.php');
+require_once('functions.php');
 
 define('APP_ID', '302999799754348');
 define('APP_SECRET', '51cb8dbdbd562a29e3dcf04f49c3804a');
